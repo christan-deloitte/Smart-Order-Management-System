@@ -1,0 +1,11 @@
+# Ignore environment files
+.env
+
+# Ignore IDE and build files
+*.iml
+.idea/
+target/
+build/
+.vscode/
+.intellij/
+.eclipse/
