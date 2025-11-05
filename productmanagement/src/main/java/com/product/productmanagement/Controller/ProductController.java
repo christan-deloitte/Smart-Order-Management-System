@@ -1,8 +1,10 @@
 package com.product.productmanagement.Controller;
 
-
 import com.product.productmanagement.Entity.Product;
+import com.product.productmanagement.Exception.ProductNotFoundException;
 import com.product.productmanagement.Model.ApiResponse;
+import com.product.productmanagement.Model.ProductRequest;
+import com.product.productmanagement.Model.ProductResponse;
 import com.product.productmanagement.Service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -19,24 +22,81 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<Product>>> getAllProducts() {
+    /**
+     * GET /products/all — fetch all products
+     */
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
+
         if (products.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiResponse<>(HttpStatus.NO_CONTENT.value(),
-                            "No products available", null));
+                            "No products found", null));
         }
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(),
-                "Products retrieved successfully", products));
+
+        List<ProductResponse> responseList = products.stream()
+                .map(product -> new ProductResponse(
+                        product.getId(),
+                        product.getSku(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getQuantity(),
+                        product.getCategory()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK.value(),
+                        "Products retrieved successfully", responseList)
+        );
     }
 
+    /**
+     * POST /products — create a new product
+     */
+    @PostMapping
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@RequestBody @Valid ProductRequest request) {
+        Product product = productService.createProduct(request);
+
+        ProductResponse response = new ProductResponse(
+                product.getId(),
+                product.getSku(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getQuantity(),
+                product.getCategory()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(HttpStatus.CREATED.value(),
+                        "Product created successfully", response));
+    }
+
+    /**
+     * GET /products/{id} — fetch product by ID
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(),
-                "Product retrieved successfully", product));
-    }
+        if (product == null) {
+            throw new ProductNotFoundException("Product not found with id: " + id);
+        }
 
-    
+        ProductResponse response = new ProductResponse(
+                product.getId(),
+                product.getSku(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getQuantity(),
+                product.getCategory()
+        );
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK.value(),
+                        "Product retrieved successfully", response)
+        );
+    }
 }

@@ -1,8 +1,6 @@
-
 package com.product.productmanagement.Entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "products")
@@ -12,31 +10,21 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "SKU must not be empty")
     @Column(nullable = false, unique = true)
     private String sku;
 
-    @NotBlank(message = "Product name cannot be blank")
     @Column(nullable = false)
     private String name;
 
     private String description;
-
-    @NotNull(message = "Price cannot be null")
-    @Positive(message = "Price must be greater than zero")
     private Double price;
-
-    @NotNull(message = "Quantity cannot be null")
-    @Min(value = 0, message = "Quantity cannot be negative")
     private Integer quantity;
-
-    @NotBlank(message = "Category cannot be blank")
     private String category;
 
-    //Constructors
+    public Product() {
+    }
 
-    public Product(Long id, String sku, String name, String description, Double price, Integer quantity, String category) {
-        this.id = id;
+    public Product(String sku, String name, String description, Double price, Integer quantity, String category) {
         this.sku = sku;
         this.name = name;
         this.description = description;
@@ -45,7 +33,7 @@ public class Product {
         this.category = category;
     }
 
-    //Getters and Setters
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
