@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @EnableAutoConfiguration
 @SpringBootApplication
-public class PaymentmanagementApplication {
+public class PaymentManagementApplication {
     public static void main(String[] args)
     {
-        SpringApplication.run(PaymentmanagementApplication.class, args);
+        SpringApplication.run(PaymentManagementApplication.class, args);
     }
 }
