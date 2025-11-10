@@ -1,16 +1,13 @@
 package com.payment.paymentmanagement;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
-
-
-@EnableAutoConfiguration
 @SpringBootApplication
-public class PaymentmanagementApplication {
-    public static void main(String[] args)
-    {
-        SpringApplication.run(PaymentmanagementApplication.class, args);
+@EnableFeignClients
+public class PaymentManagementApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(PaymentManagementApplication.class, args);
     }
 }

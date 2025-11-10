@@ -10,7 +10,7 @@ import com.order.ordermanagement.model.OrderDto;
 @Service
 public class OrderValidationService {
 
-    public void validateOrder(OrderDto existingOrderDto, OrderDto newOrderDto){
+    public void validateOrder(OrderDto.Response existingOrderDto, OrderDto.Response newOrderDto){
 
         if(newOrderDto == null){
             //log.info("Either existing or new Order object is null");

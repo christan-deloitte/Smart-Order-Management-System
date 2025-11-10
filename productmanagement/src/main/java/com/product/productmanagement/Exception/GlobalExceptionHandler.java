@@ -14,13 +14,9 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Handle validation errors for @Valid annotated requests
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String field = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
@@ -32,9 +28,6 @@ public class GlobalExceptionHandler {
                         "Validation failed", errors));
     }
 
-    /**
-     * Handle Product not found exceptions
-     */
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleProductNotFound(ProductNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -42,9 +35,6 @@ public class GlobalExceptionHandler {
                         ex.getMessage(), null));
     }
 
-    /**
-     * Handle any unhandled exceptions
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleGlobalException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

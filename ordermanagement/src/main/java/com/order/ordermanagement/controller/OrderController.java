@@ -26,17 +26,16 @@ public class OrderController {
     OrderService orderService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDto> getMethodName(@PathVariable Long id ) {
+    public ResponseEntity<OrderDto.Response> getMethodName(@PathVariable Long id ) {
         return new ResponseEntity<>(orderService.getOrderDetails(id),HttpStatus.OK);
     }
 
     @PostMapping(consumes="application/json",produces="application/json")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
-        OrderDto createdOrder = orderService.createOrder(orderDto);
-        
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-    }
-    
+    public ResponseEntity<OrderDto.Response> createOrder(@RequestBody OrderDto.Request orderRequest) {
+    OrderDto.Response createdOrder = orderService.createOrder(orderRequest);
+    return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+}
+
     
 
 

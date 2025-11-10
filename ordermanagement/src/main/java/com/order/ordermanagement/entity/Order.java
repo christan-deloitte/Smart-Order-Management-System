@@ -42,6 +42,7 @@ public class Order {
     private String status;
     private Double totalAmount;
     private Long transactionId;
+    private String paymentMode;
 
     public Order() {
     }
@@ -92,6 +93,14 @@ public class Order {
 
     public void setTransactionId(Long transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
     }
 
     @Override

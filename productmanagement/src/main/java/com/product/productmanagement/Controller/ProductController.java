@@ -7,7 +7,6 @@ import com.product.productmanagement.Model.ProductRequest;
 import com.product.productmanagement.Model.ProductResponse;
 import com.product.productmanagement.Service.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +18,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     /**
      * GET /products/all — fetch all products
@@ -36,14 +38,7 @@ public class ProductController {
         }
 
         List<ProductResponse> responseList = products.stream()
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getSku(),
-                        product.getName(),
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getQuantity(),
-                        product.getCategory()))
+                .map(productService::toResponse)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
@@ -58,16 +53,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@RequestBody @Valid ProductRequest request) {
         Product product = productService.createProduct(request);
-
-        ProductResponse response = new ProductResponse(
-                product.getId(),
-                product.getSku(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getQuantity(),
-                product.getCategory()
-        );
+        ProductResponse response = productService.toResponse(product);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(HttpStatus.CREATED.value(),
@@ -84,19 +70,21 @@ public class ProductController {
             throw new ProductNotFoundException("Product not found with id: " + id);
         }
 
-        ProductResponse response = new ProductResponse(
-                product.getId(),
-                product.getSku(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getQuantity(),
-                product.getCategory()
-        );
+        ProductResponse response = productService.toResponse(product);
 
         return ResponseEntity.ok(
                 new ApiResponse<>(HttpStatus.OK.value(),
                         "Product retrieved successfully", response)
         );
     }
+
+    @PutMapping("/{id}/reduce")
+    public ResponseEntity<ApiResponse<String>> reduceQuantity(
+        @PathVariable Long id,
+        @RequestParam int quantity) {
+
+    productService.reduceQuantity(id, quantity);
+    return ResponseEntity.ok(new ApiResponse<>(200, "Quantity updated successfully", "Updated"));
+}
+
 }

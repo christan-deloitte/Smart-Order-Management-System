@@ -4,6 +4,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.order.ordermanagement.model.ApiResponse;
 import com.order.ordermanagement.model.ProductResponse;
@@ -12,8 +14,10 @@ import com.order.ordermanagement.model.ProductResponse;
 public interface ProductClient {
 
     @GetMapping("/products/{id}")
-    ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable long id);
+    ApiResponse<ProductResponse> getProductById(@PathVariable long id);
 
+    @PutMapping("/products/{id}/reduce")
+    ApiResponse<String> reduceProductQuantity(@PathVariable Long id, @RequestParam int quantity);
 
     
     
