@@ -1,5 +1,6 @@
 package com.order.ordermanagement.model;
 
+
 public class ProductResponse {
     private Long id;
     private String sku;
@@ -27,3 +28,4 @@ public class ProductResponse {
     public Integer getQuantity() { return quantity; }
     public String getCategory() { return category; }
 }
+
