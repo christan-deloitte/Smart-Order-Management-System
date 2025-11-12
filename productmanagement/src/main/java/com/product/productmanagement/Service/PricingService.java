@@ -42,4 +42,14 @@ public class PricingService {
         }
         return result.setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
+
+    public double calculateDiscount(Product product) {
+        if (product.getPrice() == null) return 0.0;
+
+        BigDecimal base = BigDecimal.valueOf(product.getPrice());
+        BigDecimal finalPrice = BigDecimal.valueOf(finalPrice(product));
+        BigDecimal discount = base.subtract(finalPrice);
+
+        return discount.setScale(2, RoundingMode.HALF_UP).doubleValue();
+    }
 }

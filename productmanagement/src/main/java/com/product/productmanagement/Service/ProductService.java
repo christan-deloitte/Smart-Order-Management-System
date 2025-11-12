@@ -43,12 +43,14 @@ public class ProductService {
 
     public ProductResponse toResponse(Product product) {
         double finalPrice = pricingService.finalPrice(product);
+        double discount = pricingService.calculateDiscount(product);
         return new ProductResponse(
                 product.getId(),
                 product.getSku(),
                 product.getName(),
                 product.getDescription(),
                 finalPrice,
+                discount,
                 product.getQuantity(),
                 product.getCategory()
         );
@@ -64,6 +66,36 @@ public class ProductService {
 
     product.setQuantity(product.getQuantity() - quantity);
     productRepository.save(product);
+}
+    public Product updateSku(Long id, String sku) {
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
+        product.setSku(sku);
+        return productRepository.save(product);
+    }
+
+    public Product updatePrice(Long id, double price) {
+        if (price <= 0) throw new IllegalArgumentException("Price must be greater than zero");
+
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
+        product.setPrice(price);
+        return productRepository.save(product);
+    }
+
+    public Product updateQuantity(Long id, int quantity) {
+        if (quantity < 0) throw new IllegalArgumentException("Quantity cannot be negative");
+
+        Product product = productRepository.findById(id)
+            .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
+        product.setQuantity(quantity);
+        return productRepository.save(product);
+    }
+
+    public void deleteProduct(Long id) {
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
+    productRepository.delete(product);
 }
 
 }

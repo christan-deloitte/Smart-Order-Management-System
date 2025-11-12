@@ -32,12 +32,31 @@ public class PaymentService {
         }
 
         Double amount = orderResponse.getTotalAmount();
-        String mode = (request.getPaymentMode() == null) ? "" : request.getPaymentMode().trim().toLowerCase();
-        String status = switch (mode) {
-        case "upi", "card", "netbanking" -> "SUCCESS";
-        case "cash" -> "IN_PROGRESS";
-        default -> "FAILED";
-    };
+        String orderMode = (orderResponse.getPaymentMode() == null) ? "" : orderResponse.getPaymentMode().trim().toLowerCase();
+        String requestMode = (request.getPaymentMode() == null) ? "" : request.getPaymentMode().trim().toLowerCase();
+
+        String status;
+
+        if (!orderMode.equals(requestMode)) {
+            status = "FAILED";
+            System.out.println("Payment mode mismatch! Order expects: " + orderMode + ", but got: " + requestMode);
+        } else {
+        
+            switch (requestMode) {
+                case "upi", "card", "netbanking" -> {
+                    double chance = Math.random();
+                    if (chance < 0.8) { 
+                        status = "SUCCESS";
+                    } else {
+                        status = "FAILED";
+                    }
+                }
+                case "cash" -> status = "IN_PROGRESS";
+                default -> status = "FAILED";
+            }
+    }
+
+
 
     Payment payment = new Payment
     (
@@ -45,8 +64,13 @@ public class PaymentService {
         request.getPaymentMode(), 
         status);
         payment.setAmount(amount);
+        Payment savedPayment = paymentRepository.save(payment);
 
-    return paymentRepository.save(payment);
+        System.out.println("Payment processed for Order ID: " + request.getOrderId()
+                + " | Mode: " + requestMode.toUpperCase()
+                + " | Status: " + savedPayment.getStatus());
+
+        return savedPayment;
 }
 
     public Payment getPaymentById(Long id) {
