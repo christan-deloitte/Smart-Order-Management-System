@@ -83,8 +83,49 @@ public class ProductController {
         @PathVariable Long id,
         @RequestParam int quantity) {
 
-    productService.reduceQuantity(id, quantity);
-    return ResponseEntity.ok(new ApiResponse<>(200, "Quantity updated successfully", "Updated"));
-}
+        productService.reduceQuantity(id, quantity);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Quantity updated successfully", "Updated"));
+    }
 
+    @PatchMapping("/{id}/sku")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateSku(
+        @PathVariable Long id,
+        @RequestParam String sku) {
+
+        Product updatedProduct = productService.updateSku(id, sku);
+        ProductResponse response = productService.toResponse(updatedProduct);
+        return ResponseEntity.ok(
+            new ApiResponse<>(200, "SKU updated successfully", response)
+        );
+    }
+
+    @PatchMapping("/{id}/price")
+    public ResponseEntity<ApiResponse<ProductResponse>> updatePrice(
+        @PathVariable Long id,
+        @RequestParam double price) {
+
+        Product updatedProduct = productService.updatePrice(id, price);
+        ProductResponse response = productService.toResponse(updatedProduct);
+        return ResponseEntity.ok(
+            new ApiResponse<>(200, "Price updated successfully", response)
+        );
+    }
+
+    @PatchMapping("/{id}/quantity")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateQuantity(
+        @PathVariable Long id,
+        @RequestParam int quantity) {
+
+        Product updatedProduct = productService.updateQuantity(id, quantity);
+        ProductResponse response = productService.toResponse(updatedProduct);
+        return ResponseEntity.ok(
+            new ApiResponse<>(200, "Quantity updated successfully", response)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Product deleted successfully", "Deleted"));
+    }
 }
